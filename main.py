@@ -19,35 +19,64 @@ def openWebSiter(buurl):
     openApp(r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe "+buurl)
     
 def loginAndOpenGame(username,password):
-    if s.find("account_cache.png"):
-        s.find("loginBtn.png").click()
+    wait("loginBtn.png", 10)
+    
+    if screenRegion.find("account_cache.png"):
+        screenRegion.find("loginBtn.png").click()
     else:
-        s.find("account.png").click()
+        screenRegion.find("account.png").click()
         type(username)
-        s.find("password.png").click()
+        screenRegion.find("password.png").click()
         type(password)
-        s.find("loginBtn.png").click()
+        screenRegion.find("loginBtn.png").click()
     
-    s.find("loginConfirmBtn.png").click()
-    s.find("LDRBtn.png").click()#真人娛樂
-    s.find("SAGameBtn.png").click()#沙龍魚樂
+    screenRegion.find("loginConfirmBtn.png").click()
+    screenRegion.find("LDRBtn.png").click()#真人娛樂
+    screenRegion.find("SAGameBtn.png").click()#沙龍魚樂
     wait("multiGameBtn.png", FOREVER)
-    s.find("multiGameBtn.png").click()#多人頭注
-    wait("BCR01Btn.png", 5)
-    s.find("BCR01Btn.png").click()#Table1
-    s.find("selectTable.png").click()#select Table
-    s.find("BCR02Btn.png").click()#Table2
-    s.find("selectTable.png").click()#select Table
-    s.find("BCR03Btn.png").click()#Table3
-    s.find("closeHint.png").click()#close hint
-
+    screenRegion.find("multiGameBtn.png").click()#多人頭注
     
+    #TODO:抽到設定檔
+    tableRegion1=Region(255,125,410,865)
+    tableRegion2=Region(705,125,410,865)
+    tableRegion3=Region(1153,125,410,865)
+    
+    initTable(tableRegion1,"BCR01Btn.png")
+    tableRegion2.find("selectTable.png").click()#select Table
+    initTable(tableRegion2,"BCR02Btn.png")
+    tableRegion3.find("selectTable.png").click()#select Table
+    initTable(tableRegion3,"BCR03Btn.png")
+    
+    
+    
+    
+def initTable(tableRegion,BCRBtnImg):
+    wait(BCRBtnImg, 8)
+    tableRegion.find(BCRBtnImg).click()#Table1
+    wait("closeVideo.png", 5)
+    tableRegion.find("closeVideo.png").click()#close Video
+    getTableInfo(tableRegion)
+    
+def countDownStart(event):
+    print(getName(event.region)+" start countdown")
+
+def getTableInfo(tableRegion):
+    #TODO:抽到設定檔
+    print ("getTableInfo!! called")
+    tableRegion.onAppear("countDownStart.png", countDownStart)#倒數
+    tableRegion.observe(FOREVER ,background=True)
+
+def getName(tableRegion):
+    return {
+        "tableRegion1": "Table 1"
+    }.get(tableRegion, "Table 1")    # 9 is default if x not found
 
     
 
 if __name__ == "__main__":
-    s = Screen()
+    screenRegion = Screen()
     readConfig()
+    #getTableInfo()
     #load config
     #login
     
